@@ -1,60 +1,51 @@
-import { Movie } from "./types";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { StarIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Movie } from './movies-list';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { StarIcon, XIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface MovieModalProps {
   movie: Movie | null;
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onClose: () => void;
 }
 
-export function MovieModal({ movie, open, onOpenChange }: MovieModalProps) {
+export function MovieModal({ movie, open, onClose }: MovieModalProps) {
   if (!movie) return null;
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-zinc-900 border-zinc-700 text-white max-w-xl w-full">
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-lg bg-zinc-900 border-zinc-700">
+        <button
+          className="absolute top-3 right-3 text-zinc-400 hover:text-zinc-100 focus:outline-none"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          <XIcon className="w-5 h-5" />
+        </button>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-3 text-2xl">
-            <span className="text-4xl">{movie.banner}</span>
-            <span>{movie.title}</span>
+          <DialogTitle className="flex items-center gap-2 text-zinc-100">
+            <span className="text-4xl select-none" aria-hidden>{movie.poster}</span>
+            {movie.title}
           </DialogTitle>
-          <DialogDescription className="text-zinc-300 mt-2">
-            {movie.description}
+          <DialogDescription className="text-zinc-400">
+            {movie.year} &middot; {movie.genre.join(', ')}
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col md:flex-row gap-4 mt-4">
-          <div className="flex items-center justify-center aspect-[2/3] w-24 md:w-32 rounded-lg bg-zinc-800 text-5xl">
-            {movie.poster}
-          </div>
-          <div className="flex-1 flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-sm text-zinc-400">
-              <span>{movie.year}</span>
-              <span className="mx-1">•</span>
-              <span>{movie.genre}</span>
-            </div>
-            <div className="flex items-center gap-2 text-yellow-400 text-base">
-              <StarIcon className="w-5 h-5" />
-              <span className="font-semibold">{movie.rating}</span>
-            </div>
-            <Button variant="secondary" className="mt-4 w-fit">
-              Play
-            </Button>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="flex items-center gap-1 text-yellow-400 text-sm font-bold">
+            <StarIcon className="w-4 h-4" />
+            {movie.rating}
+          </span>
+          <div className="flex flex-wrap gap-1">
+            {movie.genre.map((g) => (
+              <Badge key={g} className="bg-zinc-700 text-xs px-2 py-0.5">{g}</Badge>
+            ))}
           </div>
         </div>
-        <DialogClose asChild>
-          <Button variant="ghost" size="icon" className="absolute top-4 right-4">
-            <span className="sr-only">Close</span>
-            ×
-          </Button>
-        </DialogClose>
+        <p className="text-zinc-200 mb-2">{movie.description}</p>
+        <div className="flex items-center gap-2">
+          <span className="text-2xl select-none" aria-hidden>{movie.backdrop}</span>
+        </div>
       </DialogContent>
     </Dialog>
   );
